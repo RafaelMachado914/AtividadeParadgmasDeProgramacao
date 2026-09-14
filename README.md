@@ -1,1 +1,1 @@
-# AtividadeParadgmasDePrograma-o
+# AtividadeParadigmasDeProgramação
