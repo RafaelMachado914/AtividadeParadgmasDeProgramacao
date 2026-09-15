@@ -5,23 +5,28 @@ class Aluno {
   }
 }
 
-// Ta pronto, mas tem que arrumar o input
+// Ta pronto arrumado
 function cadastrarAlunos() {
   console.log("");
-  console.log("Quantos alunos deseja cadastrar?");
-  let quantidade = parseInt(prompt("Digite a quantidade de alunos: "));
+  console.log("=== Cadastro de alunos ===");
+
+  let quantidade = parseInt(prompt("Quantos alunos deseja cadastrar?"));
+  while (isNaN(quantidade) || quantidade <= 0) { 
+    console.log("Quantidade inválida. Informe um valor maior que zero."); 
+    quantidade = parseInt(prompt("Digite novamente a quantidade de alunos:")); 
+  }
+
   let alunos = [];
   for (let i = 0; i < quantidade; i++) {
     let nome = prompt(`Digite o nome do aluno ${i + 1}: `);
 
     let nota = parseFloat(prompt(`Digite a nota do aluno ${i + 1}: `));
 
-    if (nota < 0 || nota > 10) {
-      console.log("Nota inválida. A nota deve estar entre 0 e 10.");
-      let nota = parseFloat(prompt(`Digite a nota do aluno ${i + 1}: `));
-    } else {
-      alunos.push(new Aluno(nome, nota));
+    while (isNaN(nota) || nota < 0 || nota > 10) { 
+      console.log("Nota inválida. A nota deve estar entre 0 e 10."); 
+      nota = parseFloat(prompt(`Digite novamente a nota do aluno ${i + 1}:`)); 
     }
+    alunos.push(new Aluno(nome, nota));
   }
   return alunos;
 }
@@ -35,19 +40,20 @@ function listarAlunos(alunos) {
   }
 }
 
-// incompleto
+// pronto falta revisar
 function exibirEstatisticas(alunos) {
   console.log("");
   console.log("Quantidade de alunos:");
   console.log(alunos.length);
 
   console.log("");
-  console.log("Media de notas:");
+  console.log("Media de notas da turma:");
   let totalNotas = 0;
   for (let i = 0; i < alunos.length; i++) {
     totalNotas += alunos[i].nota;
   }
-  console.log(totalNotas / alunos.length);
+  let mediaNotas = totalNotas / alunos.length;
+  console.log(mediaNotas);
 
   console.log("");
   console.log("Maior nota:");
@@ -80,18 +86,113 @@ function exibirEstatisticas(alunos) {
     mediana = alunos[Math.floor(alunos.length / 2)].nota;
   }
   console.log(mediana);
+
+  let amplitude = maiorNota - menorNota;
+  console.log(`Amplitude das notas: ${amplitude}`);
+
+  let aprovados = 0;
+  let reprovados = 0;
+
+  for (let aluno of alunos) {
+    if (aluno.nota > 6) {
+      aprovados++;
+    } else {
+      reprovados++;
+    }
+  }
+
+  console.log(`Quantidade de aprovados: ${aprovados}`);
+  console.log(`Quantidade de reprovados: ${reprovados}`);
+
+  let percentualAprovacao = (aprovados / alunos.length) * 100;
+  console.log(`Percentual de aprovação: ${percentualAprovacao.toFixed(2)}%`);
+
+  let percentualReprovacao = (reprovados / alunos.length) * 100;
+  console.log(`Percentual de reprovação: ${percentualReprovacao.toFixed(2)}%`);
+
 }
 
 // Ta pronto
 function mostrarAlunosAcimaDaMedia(alunos) {
+  console.log("");
+  console.log("Media de notas da turma:");
+  let mediaNotas = 0;
   for (let i = 0; i < alunos.length; i++) {
-    if (alunos[i].nota > 6.0) {
-      console.log("");
+    mediaNotas += alunos[i].nota;
+  }
+  mediaNotas /= alunos.length;
+  console.log(mediaNotas);
+  for (let i = 0; i < alunos.length; i++) {
+    if (alunos[i].nota > mediaNotas) {
       console.log(alunos[i].nome);
       console.log(alunos[i].nota);
       console.log("Aprovado");
     }
   }
+}
+
+// Ta pronto
+function classificacaoDesempenho(alunos) {
+    for (let aluno of alunos) {
+    let desempenho;
+
+    if (aluno.nota >= 9) {
+      desempenho = "Excelente";
+    } else if (aluno.nota >= 7) {
+      desempenho = "Bom";
+    } else if (aluno.nota >= 6) {
+      desempenho = "Regular";
+    } else {
+      desempenho = "Reprovado";
+    }
+
+    let situacao;
+
+    if (aluno.nota > 6) {
+      situacao = "Aprovado";
+    } else {
+      situacao = "Reprovado";
+    }
+
+    console.log("");
+    console.log(`Aluno: ${aluno.nome}`);
+    console.log(`Nota: ${aluno.nota}`);
+    console.log(`Situação: ${situacao}`);
+    console.log(`Desempenho: ${desempenho}`);
+  }
+}
+
+// Ta pronto
+function mostrarDistribuicaoDasNotas(alunos) {
+
+  let faixa1 = 0;
+  let faixa2 = 0;
+  let faixa3 = 0;
+  let faixa4 = 0;
+  let faixa5 = 0;
+
+  for (let aluno of alunos) {
+    if (aluno.nota < 3) {
+      faixa1++;
+    } else if (aluno.nota < 5) {
+      faixa2++;
+    } else if (aluno.nota < 6) {
+      faixa3++;
+    } else if (aluno.nota < 8) {
+      faixa4++;
+    } else {
+      faixa5++;
+    }
+  }
+
+  console.log("");
+  console.log("=== DISTRIBUIÇÃO DAS NOTAS ===");
+  console.log(`0,0 – 2,9 : ${faixa1} aluno(s)`);
+  console.log(`3,0 – 4,9 : ${faixa2} aluno(s)`);
+  console.log(`5,0 – 5,9 : ${faixa3} aluno(s)`);
+  console.log(`6,0 – 7,9 : ${faixa4} aluno(s)`);
+  console.log(`8,0 – 10,0 : ${faixa5} aluno(s)`);
+
 }
 
 // Ta pronto
@@ -103,6 +204,17 @@ function mostrarRankingDaTurma(alunos) {
     console.log(`${i + 1} - ${alunos[i].nome} - ${alunos[i].nota}`);
     console.log("");
   }
+
+  // Três alunos com as maiores notas
+  console.log("");
+  console.log("=== TOP 3 ALUNOS ===");
+
+  let limite = Math.min(3, alunos.length);
+
+  for (let i = 0; i < limite; i++) {
+    console.log(`${i + 1}º - ${alunos[i].nome} ${alunos[i].nota}`);
+  }
+
 }
 
 function Principal() {
