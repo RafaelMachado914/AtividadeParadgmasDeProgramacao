@@ -1,3 +1,17 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function perguntar(mensagem) {
+  return new Promise(resolve => {
+    rl.question(mensagem, resposta => {
+      resolve(resposta);
+    });
+  });
+}
 class Aluno {
   constructor(nome, nota) {
     this.nome = nome;
@@ -6,25 +20,25 @@ class Aluno {
 }
 
 // Ta pronto arrumado
-function cadastrarAlunos() {
+async function cadastrarAlunos() {
   console.log("");
   console.log("=== Cadastro de alunos ===");
 
-  let quantidade = parseInt(prompt("Quantos alunos deseja cadastrar?"));
+  let quantidade = parseInt(await perguntar("Quantos alunos deseja cadastrar?"));
   while (isNaN(quantidade) || quantidade <= 0) { 
     console.log("Quantidade inválida. Informe um valor maior que zero."); 
-    quantidade = parseInt(prompt("Digite novamente a quantidade de alunos:")); 
+    quantidade = parseInt(await perguntar("Digite novamente a quantidade de alunos:")); 
   }
 
   let alunos = [];
   for (let i = 0; i < quantidade; i++) {
-    let nome = prompt(`Digite o nome do aluno ${i + 1}: `);
+    let nome = await perguntar(`Digite o nome do aluno ${i + 1}: `);
 
-    let nota = parseFloat(prompt(`Digite a nota do aluno ${i + 1}: `));
+    let nota = parseFloat(await perguntar(`Digite a nota do aluno ${i + 1}: `));
 
     while (isNaN(nota) || nota < 0 || nota > 10) { 
       console.log("Nota inválida. A nota deve estar entre 0 e 10."); 
-      nota = parseFloat(prompt(`Digite novamente a nota do aluno ${i + 1}:`)); 
+      nota = parseFloat(await perguntar(`Digite novamente a nota do aluno ${i + 1}:`)); 
     }
     alunos.push(new Aluno(nome, nota));
   }
@@ -38,6 +52,7 @@ function listarAlunos(alunos) {
   for (let i = 0; i < alunos.length; i++) {
     console.log(` ${alunos[i].nome} - ${alunos[i].nota}`);
   }
+  classificacaoDesempenho(alunos);
 }
 
 // pronto falta revisar
@@ -124,8 +139,7 @@ function mostrarAlunosAcimaDaMedia(alunos) {
   console.log(mediaNotas);
   for (let i = 0; i < alunos.length; i++) {
     if (alunos[i].nota > mediaNotas) {
-      console.log(alunos[i].nome);
-      console.log(alunos[i].nota);
+      console.log(`${alunos[i].nome} ${alunos[i].nota}`);
       console.log("Aprovado");
     }
   }
@@ -217,45 +231,64 @@ function mostrarRankingDaTurma(alunos) {
 
 }
 
-function Principal() {
-  console.log("SISTEMA DE ANALISE DE NOTAS");
-  console.log("-------------------------------");
-  console.log("");
-  console.log("1 - Cadastrar alunos");
-  console.log("2 - Listar alunos");
-  console.log("3 - Exibir estatísticas da turma");
-  console.log("4 - Mostrar alunos acima da media ");
-  console.log("5 - Mostrar distribuicao das notas ");
-  console.log("6 - Mostrar ranking da turma");
-  console.log("7 - Sair");
+async function Principal() {
+  let alunos = [];
 
-  let opcao = prompt("Escolha uma opção: ");
+  let opcao;
 
-  switch (opcao) {
-    case "1":
-      let alunos = cadastrarAlunos();
-      break;
-    case "2":
-      listarAlunos(alunos);
-      break;
-    case "3":
-      exibirEstatisticas(alunos);
-      break;
-    case "4":
-      mostrarAlunosAcimaDaMedia(alunos);
-      break;
-    case "5":
-      mostrarDistribuicaoDasNotas(alunos);
-      break;
-    case "6":
-      mostrarRankingDaTurma(alunos);
-      break;
-    case "7":
-      console.log("Saindo do sistema...");
-      break;
-    default:
-      console.log("Opção inválida. Por favor, escolha uma opção válida.");
-      Principal();
-      break;
-  }
+  do {
+    console.log("");
+    console.log("SISTEMA DE ANALISE DE NOTAS");
+    console.log("-------------------------------");
+    console.log("");
+    console.log("1 - Cadastrar alunos");
+    console.log("2 - Listar alunos");
+    console.log("3 - Exibir estatísticas da turma");
+    console.log("4 - Mostrar alunos acima da media");
+    console.log("5 - Mostrar distribuicao das notas");
+    console.log("6 - Mostrar ranking da turma");
+    console.log("7 - Sair");
+
+    opcao = await perguntar("Escolha uma opção: ");
+
+    switch (opcao) {
+      case "1":
+        alunos = await cadastrarAlunos();
+        break;
+
+      case "2":
+        listarAlunos(alunos);
+        break;
+
+      case "3":
+        exibirEstatisticas(alunos);
+        break;
+
+      case "4":
+        mostrarAlunosAcimaDaMedia(alunos);
+        break;
+
+      case "5":
+        mostrarDistribuicaoDasNotas(alunos);
+        break;
+
+      case "6":
+        mostrarRankingDaTurma(alunos);
+        break;
+
+      case "7":
+        console.log("Saindo do sistema...");
+        break;
+
+      default:
+        console.log("Opção inválida. Por favor, escolha uma opção válida.");
+    }
+
+  } while (opcao !== "7");
+
+  rl.close();
+
 }
+
+console.log("Iniciando programa...");
+Principal();
